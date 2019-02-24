@@ -1,25 +1,31 @@
-WEEKEND='false'
+#!/bin/bash
+# Run with no arguments to download today's paper
+#
 
 ###### GET PARAMETERS #######
+if [[ $# -eq 0 ]]; then
+    echo "Assuming today's date: $(date +"%y-%m-%d")"
+    DATE=$(date +"%y%m%d")
+else
+    while getopts y:m:d:w: option; do
+        case "${option}" in
+            y) YEAR=${OPTARG};;
+            m) MONTH=${OPTARG};;
+            d) DAY=${OPTARG};;
+        esac
+    done
+    DATE=$YEAR$MONTH$DAY
+fi
 
-while getopts y:m:d:w: option
-do
-    case "${option}"
-    in
-        y) YEAR=${OPTARG};;
-        m) MONTH=${OPTARG};;
-        d) DAY=${OPTARG};;
-        w) WEEKEND=$OPTARG;;
-    esac
-done
-
+weekday=$(date -d $DATE +"%u")
+if [[ $weekday -eq 6  || $weekday -eq 7 ]]; then  # 6 and 7 are Saturday and Sunday
+    WEEKEND='true'
+fi
 ############################
 
-DATE=$YEAR$MONTH$DAY
-
 if  [[ -z "$DAY" ]] || [[ -z "$MONTH" ]] || [[ -z "$YEAR" ]] ; then
-    echo "Usage: ./ilfoglio.sh -y YYYY -m MM -d DD"
-    echo "Optional: -w true (if the chosen day is a Saturday)"
+    echo "Usage: ./ilfoglio.sh [-y YYYY -m MM -d DD]"
+    echo "Scarica il giornale di oggi se non vengono dati argomenti."
 else
 
     mkdir $DATE
