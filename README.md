@@ -1,0 +1,2 @@
+# ilfoglio
+Il Foglio Downloader
